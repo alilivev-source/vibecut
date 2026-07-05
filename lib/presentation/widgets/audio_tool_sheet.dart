@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/models/project_model.dart';
@@ -18,38 +16,15 @@ class AudioToolSheet extends StatefulWidget {
 }
 
 class _AudioToolSheetState extends State<AudioToolSheet> {
-  final _recorder = Record();
-  bool _recording = false;
 
   Future<void> _pickMusic() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.audio);
     if (result == null || result.files.single.path == null) return;
-    widget.cubit.addAudioTrack(AudioTrackModel(id: const Uuid().v4(), path: result.files.single.path!));
+    widget.cubit.addAudioTrack(AudioTrackModel(
+      id: const Uuid().v4(),
+      path: result.files.single.path!,
+    ));
     if (mounted) Navigator.pop(context);
-  }
-
-  Future<void> _toggleRecording() async {
-    if (_recording) {
-      final path = await _recorder.stop();
-      setState(() => _recording = false);
-      if (path != null) {
-        widget.cubit.addAudioTrack(AudioTrackModel(id: const Uuid().v4(), path: path, isVoiceOver: true));
-        if (mounted) Navigator.pop(context);
-      }
-    } else {
-      final status = await Permission.microphone.request();
-      if (!status.isGranted) return;
-      final dir = await getTemporaryDirectory();
-      final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
-      await _recorder.start(path: path);
-      setState(() => _recording = true);
-    }
-  }
-
-  @override
-  void dispose() {
-    _recorder.dispose();
-    super.dispose();
   }
 
   @override
@@ -58,16 +33,21 @@ class _AudioToolSheetState extends State<AudioToolSheet> {
     final project = widget.cubit.project;
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(color: Color(0xFF1E1E1E), borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.t('tool_audio', lang), style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.t('tool_audio', lang),
+              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(AppLocalizations.t('audio_mute', lang), style: const TextStyle(color: Colors.white, fontSize: 14)),
+            title: Text(AppLocalizations.t('audio_mute', lang),
+                style: const TextStyle(color: Colors.white, fontSize: 14)),
             value: project.muteOriginal,
             activeColor: Colors.amber,
             onChanged: (v) => widget.cubit.setMuteOriginal(v),
@@ -75,21 +55,20 @@ class _AudioToolSheetState extends State<AudioToolSheet> {
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.music_note, color: Colors.amber),
-            title: Text(AppLocalizations.t('audio_music', lang), style: const TextStyle(color: Colors.white, fontSize: 14)),
+            title: Text(AppLocalizations.t('audio_music', lang),
+                style: const TextStyle(color: Colors.white, fontSize: 14)),
             onTap: _pickMusic,
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Icon(_recording ? Icons.stop_circle : Icons.mic, color: _recording ? Colors.redAccent : Colors.amber),
-            title: Text(
-              _recording ? AppLocalizations.t('audio_stop_recording', lang) : AppLocalizations.t('audio_record', lang),
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-            ),
-            onTap: _toggleRecording,
+            leading: const Icon(Icons.mic_off, color: Colors.white38),
+            title: const Text('Voice Over (قريبًا / Coming Soon)',
+                style: TextStyle(color: Colors.white38, fontSize: 14)),
           ),
           if (project.audioTracks.isNotEmpty) ...[
             const Divider(color: Colors.white24),
-            Text(AppLocalizations.t('audio_volume', lang), style: const TextStyle(color: Colors.white70, fontSize: 13)),
+            Text(AppLocalizations.t('audio_volume', lang),
+                style: const TextStyle(color: Colors.white70, fontSize: 13)),
             ...project.audioTracks.map((track) => Row(
                   children: [
                     Expanded(
