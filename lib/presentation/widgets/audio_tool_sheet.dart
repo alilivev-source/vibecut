@@ -18,7 +18,7 @@ class AudioToolSheet extends StatefulWidget {
 }
 
 class _AudioToolSheetState extends State<AudioToolSheet> {
-  final _recorder = AudioRecorder();
+  final _recorder = Record();
   bool _recording = false;
 
   Future<void> _pickMusic() async {
@@ -41,7 +41,7 @@ class _AudioToolSheetState extends State<AudioToolSheet> {
       if (!status.isGranted) return;
       final dir = await getTemporaryDirectory();
       final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
-      await _recorder.start(const RecordConfig(), path: path);
+      await _recorder.start(path: path);
       setState(() => _recording = true);
     }
   }
