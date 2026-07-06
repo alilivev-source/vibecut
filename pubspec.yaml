@@ -1,5 +1,5 @@
 name: vibecut_pro
-description: "محرر فيديو عربي/إنجليزي محترف"
+description: "محرر فيديو عربي/إنجليزي احترافي"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -16,14 +16,12 @@ dependencies:
   google_fonts: ^6.2.1
   shared_preferences: ^2.2.2
   path_provider: ^2.1.1
-  # بديل صيانة موثوق بعد توقف ffmpeg_kit_flutter_full_gpl رسميًا في 2025
   ffmpeg_kit_flutter_new: ^3.2.0
   permission_handler: ^11.3.0
   uuid: ^4.3.3
-  camera: ^0.10.5+9
-  google_mlkit_face_detection: ^0.10.0
   share_plus: ^7.2.2
   url_launcher: ^6.2.5
+  google_mobile_ads: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -39,10 +37,6 @@ flutter:
     - assets/core/stickers/
     - assets/core/filters/luts/
     - assets/icon.png
-    # ملاحظة: الانتقالات (Transitions) لا تحتاج ملفات، تُنفَّذ عبر فلتر
-    # xfade المدمج بـ FFmpeg مباشرة.
-    # مجلد assets/core/audio/ (10 مقاطع MP3 مجانية) لم تُرفع بعد - أضفه هنا
-    # وأضف "- assets/core/audio/" لهذه القائمة بمجرد توفر الملفات.
 
 flutter_launcher_icons:
   android: "launcher_icon"
